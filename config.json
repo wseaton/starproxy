@@ -1,0 +1,50 @@
+{
+  "rules": [
+    {
+      "name": "system_runtime_nodes",
+      "table_name": "system.runtime.nodes",
+      "value": {
+        "type": "WhereClause",
+        "filter": {
+          "BinaryOp": {
+            "left": {
+              "Identifier": {
+                "value": "coordinator",
+                "quote_style": null
+              }
+            },
+            "op": "Eq",
+            "right": {
+              "Value": {
+                "Boolean": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "select_star_limit",
+      "table_name": "system.runtime.nodes",
+      "value": {
+        "type": "SelectStarNoLimit"
+      }
+    },
+    {
+      "name": "inbound_cidr_example",
+      "table_name": "system.runtime.nodes",
+      "value": {
+        "type": "CidrOrigin",
+        "inbound_cidr": "10.0.0.0/8"
+      }
+    },
+    {
+      "name": "explain_analyze_example",
+      "table_name": "system.runtime.nodes",
+      "value": {
+        "type": "ScanEstimates",
+        "max_cpu_cost": 50000.0
+      }
+    }
+  ]
+}
