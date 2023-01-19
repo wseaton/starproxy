@@ -1,8 +1,10 @@
-# Starproxy
+# starproxy
+
+> :warning: **`starproxy` is PoC software**: Not currently used in production, but will likely be some day.
 
 ## Table of Contents
 
-- [Starproxy](#starproxy)
+- [starproxy](#starproxy)
   - [Table of Contents](#table-of-contents)
   - [Background](#background)
   - [How it works](#how-it-works)
