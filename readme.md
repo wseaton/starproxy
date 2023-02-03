@@ -1,6 +1,6 @@
 # starproxy
 
-> :warning: **`starproxy` is PoC software**: Not currently used in production, but will likely be some day.
+> :warning: **`starproxy` is a prototype**: Not currently used in production, but will likely be some day.
 
 ## Table of Contents
 
@@ -8,6 +8,7 @@
   - [Table of Contents](#table-of-contents)
   - [Background](#background)
   - [How it works](#how-it-works)
+  - [Run \&\& Development](#run--development)
   - [Implemented Rules](#implemented-rules)
   - [Future work](#future-work)
 
@@ -29,7 +30,7 @@ The most attractive items to us are probably:
 
 First and foremost, `starproxy` is an http proxy implemented in `rust` using a combination of `axum/hyper`.
 
-The choice of Rust for the backend is two-fold: 
+The choice of Rust for the backend is two-fold:
 
 1) Speed, we want to avoid adding appreciable measurable latency to end user requests. If a query is not subject to any rules/actions then the proxy should quickly forward the request to the destination as normal.
 2) Rust has excellent libraries for parsing SQL grammar, in this case we are using `sqlparser-rs`, which allows us to very quickly parse the AST of the query and use it as input for rules. This allows us to craft rules that understand the structure of the query, not just match some logic w/ regular expressions.
@@ -46,7 +47,23 @@ The choice of Rust for the backend is two-fold:
 
 Rules can also outright block requests by returning error status codes to the client directly.
 
+## Run && Development
+
+To run `starproxy` locally, you first need to install the rust toolchain. Then, you can run
+
+```sh
+export STARPROXY_CONFIG_PATH=./config.json
+export STARPROXY_UPSTREAM_URL=https://your.cluster.company.dev
+cargo run
+```
+
+This will spin up the web app on port 3000, serving only HTTP.
+
+> :warning: `starproxy` does not itself do SSL termination, you'll need an additional reverse proxy or hopefully your PaaS platform is providing an SSL cert (like a k8s Ingress or OpenShift Route). If you don't serve this proxy w/ SSL termination then the `OAuthProvider` for trino/starburst will likely not work for authentication. You've been warned!
+
 ## Implemented Rules
+
+For this prototype we've implemented a handful of rules:
 
 - `WhereClause` - If a query contains a specific table reference, ensure an associated where clause is in that query
 - `SelectStarNoLimit` - If a query contains a select *, enforce that a LIMIT is applied. If not, put it in low priority queue
@@ -58,6 +75,8 @@ An example config file is bundled with the repo ![here](./config.json)
 If you have an idea for a rule that you'd like to see implemented, feel free to open a GitHub issue!
 
 ## Future work
+
+Write a rule + action that actually rewrites the body of the query, instead of modifying the request headers. If this is done, we should probably inject a warning so the client is notified that this ocurred.
 
 Train a machine learning model (likely something like XGBoost) to do query performance classification using historical performance data. Identify likely offensive queries and proactively classify them without needing an admin to define rules.
 

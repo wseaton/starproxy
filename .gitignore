@@ -1,0 +1,10 @@
+/target
+.venv/
+__pycache__/
+poetry.lock
+.vscode
+.env
+
+*.py
+pyproject.toml
+justfile
