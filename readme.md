@@ -29,7 +29,10 @@ The most attractive items to us are probably:
 
 First and foremost, `starproxy` is an http proxy implemented in `rust` using a combination of `axum/hyper`.
 
-The choice of Rust for the backend is two-fold, 1) speed, we want to avoid adding appreciable measurable latency to end user requests. If a query is not subject to any rules/actions then the proxy should quickly forward the request to the destination as normal. 2) Rust has excellent libraries for parsing SQL grammar, in this case we are using `sqlparser-rs`, which allows us to very quickly parse the AST of the query and use it as input for rules. This allows us to craft rules that understand the structure of the query, not just match some logic w/ regular expressions.
+The choice of Rust for the backend is two-fold: 
+
+1) Speed, we want to avoid adding appreciable measurable latency to end user requests. If a query is not subject to any rules/actions then the proxy should quickly forward the request to the destination as normal.
+2) Rust has excellent libraries for parsing SQL grammar, in this case we are using `sqlparser-rs`, which allows us to very quickly parse the AST of the query and use it as input for rules. This allows us to craft rules that understand the structure of the query, not just match some logic w/ regular expressions.
 
 ![Diagram](./doc/Starproxy.drawio.png)
 
@@ -52,6 +55,8 @@ Rules can also outright block requests by returning error status codes to the cl
 
 An example config file is bundled with the repo ![here](./config.json)
 
+If you have an idea for a rule that you'd like to see implemented, feel free to open a GitHub issue!
+
 ## Future work
 
 Train a machine learning model (likely something like XGBoost) to do query performance classification using historical performance data. Identify likely offensive queries and proactively classify them without needing an admin to define rules.
@@ -60,4 +65,4 @@ Make "actions" more configurable. Right now actions are bound to rules at compil
 
 Allow wildcard or regex specifiers for tables to make rules more flexible.
 
-Load balance queries between multiple clusters and/or regions if our starburst footprint becomes multi-region.
+Load balance / route queries between multiple clusters, to be used if the backing cluster footprint is HA or multi-az. It would be very nice to treat routing as an action, or even chain actions together. Like rewriting a query to add a limit and then sending it to a cluster designed to only support adhoc "exploration" type queries.
